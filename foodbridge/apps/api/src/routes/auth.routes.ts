@@ -157,4 +157,107 @@ router.post('/login', validateBody(LoginSchema), async (req: Request, res: Respo
   }
 });
 
+// ─── GET /auth/ngos (List all NGOs for demo switcher) ─────────────────────────
+router.get('/ngos', async (_req: Request, res: Response) => {
+  try {
+    const ngos = await prisma.nGO.findMany({
+      orderBy: { org_name: 'asc' },
+    });
+    return res.json(ngos);
+  } catch (error: any) {
+    return res.status(500).json({ error: 'Failed to list NGOs' });
+  }
+});
+
+// ─── GET /auth/volunteers (List all volunteers for demo switcher) ─────────────
+router.get('/volunteers', async (_req: Request, res: Response) => {
+  try {
+    const volunteers = await prisma.volunteer.findMany({
+      include: {
+        user: {
+          select: {
+            full_name: true,
+          },
+        },
+      },
+      orderBy: { user: { full_name: 'asc' } },
+    });
+    return res.json(volunteers);
+  } catch (error: any) {
+    return res.status(500).json({ error: 'Failed to list volunteers' });
+  }
+});
+
+// ─── GET /auth/matches (List matches for NGO, bypass auth for switcher demo) ──
+router.get('/matches', async (req: Request, res: Response) => {
+  const { ngo_id } = req.query;
+  try {
+    const matches = await prisma.donationMatch.findMany({
+      where: ngo_id ? { ngo_id: ngo_id as string } : {},
+      include: {
+        donation: {
+          include: {
+            donor: true,
+          },
+        },
+      },
+      orderBy: { notified_at: 'desc' },
+    });
+    return res.json(matches);
+  } catch (error: any) {
+    return res.status(500).json({ error: 'Failed to list matches' });
+  }
+});
+
+// ─── GET /auth/deliveries (List deliveries for NGO, bypass auth for demo) ─────
+router.get('/deliveries', async (req: Request, res: Response) => {
+  const { ngo_id } = req.query;
+  try {
+    const deliveries = await prisma.delivery.findMany({
+      where: ngo_id
+        ? {
+            match: {
+              ngo_id: ngo_id as string,
+            },
+          }
+        : {},
+      include: {
+        donation: {
+          include: {
+            donor: true,
+          },
+        },
+        volunteer: {
+          include: {
+            user: {
+              select: {
+                full_name: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { assigned_at: 'desc' },
+    });
+    return res.json(deliveries);
+  } catch (error: any) {
+    return res.status(500).json({ error: 'Failed to list deliveries' });
+  }
+});
+
+// ─── PATCH /auth/volunteers/:id/availability (Toggle availability for demo) ──
+router.patch('/volunteers/:id/availability', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { is_available } = req.body;
+  try {
+    const updated = await prisma.volunteer.update({
+      where: { id },
+      data: { is_available },
+    });
+    return res.json(updated);
+  } catch (error: any) {
+    return res.status(500).json({ error: 'Failed to update volunteer availability' });
+  }
+});
+
 export default router;

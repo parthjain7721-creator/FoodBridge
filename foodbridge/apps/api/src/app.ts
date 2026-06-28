@@ -7,6 +7,9 @@ import rateLimit from 'express-rate-limit';
 import authRouter from './routes/auth.routes';
 import donationsRouter from './routes/donations.routes';
 import aiRouter from './routes/ai.routes';
+import matchRouter from './routes/match.routes';
+import routesRouter from './routes/routes.routes';
+import deliveriesRouter from './routes/deliveries.routes';
 
 const app: Application = express();
 
@@ -58,6 +61,9 @@ app.get('/api/v1/health', (_req: Request, res: Response) => {
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/donations', donationsRouter);
 app.use('/api/v1/ai', aiRouter);
+app.use('/api/v1/match', matchRouter);
+app.use('/api/v1/routes', routesRouter);
+app.use('/api/v1/deliveries', deliveriesRouter);
 
 // ─── 404 handler ──────────────────────────────────────────────────────────────
 app.use((_req: Request, res: Response) => {

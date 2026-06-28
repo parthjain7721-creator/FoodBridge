@@ -27,9 +27,21 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               </Link>
               <Link
                 href="/dashboard/ai"
-                className="rounded-lg bg-green-900/30 px-3 py-1.5 text-sm font-medium text-green-400 transition-all"
+                className="rounded-lg px-3 py-1.5 text-sm text-slate-400 hover:bg-slate-800 hover:text-white transition-all"
               >
                 AI Assessment
+              </Link>
+              <Link
+                href="/dashboard/ngo"
+                className="rounded-lg px-3 py-1.5 text-sm text-slate-400 hover:bg-slate-800 hover:text-white transition-all"
+              >
+                NGO Portal
+              </Link>
+              <Link
+                href="/dashboard/volunteer"
+                className="rounded-lg px-3 py-1.5 text-sm text-slate-400 hover:bg-slate-800 hover:text-white transition-all"
+              >
+                Volunteer Portal
               </Link>
             </nav>
           </div>
