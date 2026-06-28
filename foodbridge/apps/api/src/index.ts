@@ -1,7 +1,9 @@
 import 'dotenv/config';
 import http from 'http';
 import { Server } from 'socket.io';
+import cron from 'node-cron';
 import app from './app';
+import { prisma } from './lib/prisma';
 
 const PORT = process.env.PORT || 4000;
 
@@ -48,6 +50,29 @@ volunteerNs.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.info(`[Socket] Volunteer disconnected: ${socket.id}`);
   });
+});
+
+// ─── Daily Expiry Check Cron (Phase 5 — runs every 30 mins) ────────────────────
+cron.schedule('*/30 * * * *', async () => {
+  console.info('[Cron] Running surplus availability expiry check...');
+  const now = new Date();
+  try {
+    const expiredCount = await prisma.donation.updateMany({
+      where: {
+        status: { in: ['pending', 'matched', 'pickup_assigned'] },
+        available_until: { lt: now },
+      },
+      data: {
+        status: 'expired',
+        updated_at: now,
+      },
+    });
+    if (expiredCount.count > 0) {
+      console.info(`[Cron] Expired ${expiredCount.count} past-window donations.`);
+    }
+  } catch (err: any) {
+    console.error('[Cron] Expiry check task failed:', err.message);
+  }
 });
 
 httpServer.listen(PORT, () => {

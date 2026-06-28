@@ -43,6 +43,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               >
                 Volunteer Portal
               </Link>
+              <Link
+                href="/dashboard/public"
+                className="rounded-lg px-3 py-1.5 text-sm text-slate-400 hover:bg-slate-800 hover:text-white transition-all"
+              >
+                Public Live Feed
+              </Link>
             </nav>
           </div>
           <div className="flex items-center gap-3">
