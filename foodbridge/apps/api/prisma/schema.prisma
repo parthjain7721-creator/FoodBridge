@@ -1,0 +1,285 @@
+// FoodBridge — Full Prisma Schema
+// Matches EXACTLY the table definitions in 2_backend_schema.md
+// Column names, types, defaults, and relations are preserved verbatim.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// users — Core authentication table. Extended by role-specific tables.
+// role CHECK: 'donor' | 'ngo' | 'volunteer' | 'admin'
+// ─────────────────────────────────────────────────────────────────────────────
+model User {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email       String   @unique
+  phone       String?
+  full_name   String
+  role        String   // CHECK (role IN ('donor','ngo','volunteer','admin'))
+  avatar_url  String?
+  is_verified Boolean  @default(false)
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime @default(now()) @db.Timestamptz(6)
+
+  donor         Donor?
+  ngo           NGO?
+  volunteer     Volunteer?
+  notifications Notification[]
+
+  @@map("users")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// donors — Restaurants, hostels, catering services, event organisers.
+// org_type CHECK: 'restaurant' | 'hostel' | 'event' | 'catering' | 'other'
+// ─────────────────────────────────────────────────────────────────────────────
+model Donor {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id          String   @unique @db.Uuid
+  org_name         String
+  org_type         String?  // CHECK (org_type IN ('restaurant','hostel','event','catering','other'))
+  address          String
+  latitude         Decimal  @db.Decimal(9, 6)
+  longitude        Decimal  @db.Decimal(9, 6)
+  avg_daily_covers Int?
+  cuisine_tags     String[]
+  fssai_number     String?
+  impact_score     Int      @default(0)
+  total_kg_donated Decimal  @default(0) @db.Decimal(10, 2)
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+
+  user      User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  donations Donation[]
+
+  // GIST index applied via manual SQL: idx_donors_location
+  @@map("donors")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ngos — Recipient organisations — shelters, food banks, orphanages.
+// ─────────────────────────────────────────────────────────────────────────────
+model NGO {
+  id                     String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id                String   @unique @db.Uuid
+  org_name               String
+  registration_no        String?  @unique
+  address                String
+  latitude               Decimal  @db.Decimal(9, 6)
+  longitude              Decimal  @db.Decimal(9, 6)
+  storage_capacity_kg    Decimal  @default(0) @db.Decimal(8, 2)
+  current_load_kg        Decimal  @default(0) @db.Decimal(8, 2)
+  accepted_food_types    String[]
+  beneficiary_count      Int?
+  operating_hours        Json?    // e.g. { "mon": ["08:00","20:00"], ... }
+  acceptance_rate        Decimal  @default(1.0) @db.Decimal(4, 2)
+  avg_response_time_mins Int?
+  created_at             DateTime @default(now()) @db.Timestamptz(6)
+
+  user             User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  donation_matches DonationMatch[]
+
+  // GIST index applied via manual SQL: idx_ngos_location
+  @@map("ngos")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// volunteers — Delivery agents.
+// vehicle_type CHECK: 'bike' | 'car' | 'van' | 'cycle' | 'walk'
+// ─────────────────────────────────────────────────────────────────────────────
+model Volunteer {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id          String   @unique @db.Uuid
+  vehicle_type     String?  // CHECK (vehicle_type IN ('bike','car','van','cycle','walk'))
+  max_load_kg      Decimal? @db.Decimal(6, 2)
+  latitude         Decimal? @db.Decimal(9, 6)
+  longitude        Decimal? @db.Decimal(9, 6)
+  is_available     Boolean  @default(false)
+  total_deliveries Int      @default(0)
+  rating           Decimal  @default(5.0) @db.Decimal(3, 2)
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+
+  user       User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  deliveries Delivery[]
+
+  // GIST index applied via manual SQL: idx_volunteers_location
+  @@map("volunteers")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// donations — Core entity representing a single food donation event.
+// status CHECK: 'pending'|'ai_processing'|'matched'|'pickup_assigned'|
+//               'in_transit'|'delivered'|'cancelled'|'expired'|'rejected'
+// ai_quality_grade CHECK: 'A'|'B'|'C'|'unrated'
+// ─────────────────────────────────────────────────────────────────────────────
+model Donation {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  donor_id           String   @db.Uuid
+  title              String
+  description        String?
+  food_items         Json     // [{ "name": "Biryani", "qty_kg": 5.0, "veg": true }]
+  total_quantity_kg  Decimal  @db.Decimal(8, 2)
+  prepared_at        DateTime @db.Timestamptz(6)
+  available_from     DateTime @db.Timestamptz(6)
+  available_until    DateTime @db.Timestamptz(6)
+  pickup_address     String?
+  pickup_lat         Decimal? @db.Decimal(9, 6)
+  pickup_lng         Decimal? @db.Decimal(9, 6)
+  is_veg             Boolean  @default(true)
+  contains_allergens String[]
+  status             String   @default("pending")
+  safety_score       Int?     // Computed by AI (0–100); NULL until AI processed
+  score_breakdown    Json?
+  ai_shelf_life_hrs  Int?
+  ai_quality_grade   String?  // CHECK (ai_quality_grade IN ('A','B','C','unrated'))
+  created_at         DateTime @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime @default(now()) @db.Timestamptz(6)
+
+  donor            Donor           @relation(fields: [donor_id], references: [id], onDelete: Cascade)
+  donation_images  DonationImage[]
+  ai_assessments   AIAssessment[]
+  donation_matches DonationMatch[]
+  delivery         Delivery?
+
+  @@index([status], map: "idx_donations_status")
+  @@index([donor_id], map: "idx_donations_donor")
+  @@map("donations")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// donation_images — Food images uploaded for computer vision assessment.
+// ─────────────────────────────────────────────────────────────────────────────
+model DonationImage {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  donation_id  String   @db.Uuid
+  storage_path String   // Supabase Storage bucket path
+  public_url   String?
+  is_primary   Boolean  @default(false)
+  uploaded_at  DateTime @default(now()) @db.Timestamptz(6)
+
+  donation Donation @relation(fields: [donation_id], references: [id], onDelete: Cascade)
+
+  @@map("donation_images")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ai_assessments — Full record of every AI call result for audit and retraining.
+// assessment_type CHECK: 'quality_vision'|'surplus_prediction'|'scoring'
+// ─────────────────────────────────────────────────────────────────────────────
+model AIAssessment {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  donation_id     String   @db.Uuid
+  model_used      String   // e.g. "gemini-1.5-pro"
+  assessment_type String?  // CHECK (assessment_type IN ('quality_vision','surplus_prediction','scoring'))
+  input_payload   Json?
+  raw_response    Json?
+  parsed_result   Json?
+  confidence      Decimal? @db.Decimal(4, 3)
+  latency_ms      Int?
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+
+  donation Donation @relation(fields: [donation_id], references: [id], onDelete: Cascade)
+
+  @@map("ai_assessments")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// donation_matches — Records which NGO was matched and the acceptance outcome.
+// match_rank: 1 = best match, 2 = 2nd, 3 = 3rd
+// status CHECK: 'pending'|'accepted'|'rejected'|'expired'
+// ─────────────────────────────────────────────────────────────────────────────
+model DonationMatch {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  donation_id      String    @db.Uuid
+  ngo_id           String    @db.Uuid
+  match_rank       Int
+  match_score      Decimal?  @db.Decimal(5, 2)
+  notified_at      DateTime  @default(now()) @db.Timestamptz(6)
+  responded_at     DateTime? @db.Timestamptz(6)
+  status           String    @default("pending")
+  rejection_reason String?
+
+  donation Donation  @relation(fields: [donation_id], references: [id], onDelete: Cascade)
+  ngo      NGO       @relation(fields: [ngo_id], references: [id])
+  deliveries Delivery[]
+
+  @@index([donation_id], map: "idx_matches_donation")
+  @@map("donation_matches")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// deliveries — Tracks the physical pickup and drop-off by a volunteer.
+// status CHECK: 'assigned'|'en_route_pickup'|'picked_up'|
+//               'en_route_delivery'|'delivered'|'failed'
+// ─────────────────────────────────────────────────────────────────────────────
+model Delivery {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  donation_id        String    @unique @db.Uuid // ONE delivery per donation
+  match_id           String    @db.Uuid
+  volunteer_id       String    @db.Uuid
+  route_polyline     String?   // Encoded Google Maps polyline
+  distance_km        Decimal?  @db.Decimal(6, 2)
+  est_duration_mins  Int?
+  assigned_at        DateTime  @default(now()) @db.Timestamptz(6)
+  picked_up_at       DateTime? @db.Timestamptz(6)
+  delivered_at       DateTime? @db.Timestamptz(6)
+  pickup_photo_url   String?
+  delivery_photo_url String?
+  ngo_confirmation   Boolean   @default(false)
+  rating_by_ngo      Int?      // CHECK (rating_by_ngo BETWEEN 1 AND 5)
+  status             String    @default("assigned")
+
+  donation  Donation      @relation(fields: [donation_id], references: [id])
+  match     DonationMatch @relation(fields: [match_id], references: [id])
+  volunteer Volunteer     @relation(fields: [volunteer_id], references: [id])
+
+  @@index([volunteer_id], map: "idx_deliveries_vol")
+  @@map("deliveries")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// notifications — Unified notification log across all actors.
+// sent_via: ['push', 'email', 'sms']
+// ─────────────────────────────────────────────────────────────────────────────
+model Notification {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String   @db.Uuid
+  type       String
+  title      String
+  body       String?
+  data       Json?
+  is_read    Boolean  @default(false)
+  sent_via   String[]
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  // Partial index (WHERE is_read = FALSE) applied via manual SQL: idx_notif_user_unread
+  @@index([user_id], map: "idx_notif_user_unread")
+  @@map("notifications")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// impact_metrics — Daily aggregated statistics for the public dashboard.
+// meals_provided = FLOOR(kg_saved / 0.4)
+// co2_avoided_kg = kg_saved * 2.5  (IPCC food waste factor)
+// ─────────────────────────────────────────────────────────────────────────────
+model ImpactMetric {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  date              DateTime @unique @db.Date
+  donations_count   Int      @default(0)
+  kg_saved          Decimal  @default(0) @db.Decimal(10, 2)
+  meals_provided    Int      @default(0)
+  co2_avoided_kg    Decimal  @default(0) @db.Decimal(10, 2)
+  ngos_served       Int      @default(0)
+  volunteers_active Int      @default(0)
+  avg_safety_score  Decimal? @db.Decimal(4, 2)
+
+  @@map("impact_metrics")
+}

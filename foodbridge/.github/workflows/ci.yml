@@ -1,0 +1,41 @@
+name: FoodBridge CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint-and-typecheck:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      # Fix: use npm install instead of npm ci since there is no committed
+      # package-lock.json yet. Once package-lock.json is committed to the repo,
+      # switch this back to `npm ci` for deterministic installs.
+      - name: Install dependencies
+        run: npm install --prefer-offline
+
+      - name: Lint (turbo)
+        run: npm run lint
+
+      - name: Type check (turbo)
+        run: npm run type-check
+
+      - name: Format check
+        run: npm run format:check
