@@ -60,7 +60,7 @@ export default function SignInPage() {
           <span className="text-xl font-bold tracking-tight">FoodBridge</span>
         </Link>
         <div className="text-sm text-green-200">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <Link href="/sign-up" className="text-green-400 font-semibold hover:text-green-300 transition-colors">
             Sign up
           </Link>
