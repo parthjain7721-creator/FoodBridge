@@ -46,3 +46,11 @@ coverage/
 
 # Agents
 .agents/
+
+# Markdown Docs
+platform_blueprint.md
+5_implementation_plan.md
+4_trd.md
+3_prd.md
+2_backend_schema.md
+1_workflow.md
