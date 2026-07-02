@@ -19,9 +19,23 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`Donor: ${donor.org_name} (ID: ${donor.id})`);
-  console.log(`NGO: ${ngo.org_name} (ID: ${ngo.id})`);
-  console.log(`Volunteer: ${volunteer.user_id} (ID: ${volunteer.id})`);
+  // Fetch corresponding User records to get correct email addresses
+  const donorUser = await prisma.user.findUnique({ where: { id: donor.user_id } });
+  const ngoUser = await prisma.user.findUnique({ where: { id: ngo.user_id } });
+  const volunteerUser = await prisma.user.findUnique({ where: { id: volunteer.user_id } });
+
+  if (!donorUser || !ngoUser || !volunteerUser) {
+    console.error('Error: Associated user records not found.');
+    process.exit(1);
+  }
+
+  const donorEmail = donorUser.email;
+  const ngoEmail = ngoUser.email;
+  const volunteerEmail = volunteerUser.email;
+
+  console.log(`Donor: ${donor.org_name} (ID: ${donor.id}, Email: ${donorEmail})`);
+  console.log(`NGO: ${ngo.org_name} (ID: ${ngo.id}, Email: ${ngoEmail})`);
+  console.log(`Volunteer: ${volunteer.user_id} (ID: ${volunteer.id}, Email: ${volunteerEmail})`);
 
   // Ensure volunteer is available
   await prisma.volunteer.update({
@@ -35,14 +49,14 @@ async function main() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      email: 'donor1@foodbridge.com',
+      email: donorEmail,
       password: 'Password123!',
     }),
   });
 
   const loginData: any = await loginRes.json();
   if (!loginRes.ok) {
-    console.error('Failed to log in:', loginData.error);
+    console.error('Failed to log in as donor:', loginData.error);
     process.exit(1);
   }
   const token = loginData.token;
@@ -94,6 +108,10 @@ async function main() {
     }),
   });
   const qualityData: any = await qualityRes.json();
+  if (!qualityRes.ok) {
+    console.error('Failed quality assessment:', qualityData);
+    process.exit(1);
+  }
   console.log('Quality Grade:', qualityData.quality_grade, `(${qualityData.confidence * 100}% confidence)`);
 
   console.log('\n--- Computing Safety Score ---');
@@ -108,6 +126,10 @@ async function main() {
     }),
   });
   const scoreData: any = await scoreRes.json();
+  if (!scoreRes.ok) {
+    console.error('Failed score computation:', scoreData);
+    process.exit(1);
+  }
   console.log('Safety Score:', scoreData.safety_score, '-', scoreData.recommendation);
 
   // 5. Find NGO matches
@@ -124,6 +146,10 @@ async function main() {
     }),
   });
   const matchData: any = await matchRes.json();
+  if (!matchRes.ok) {
+    console.error('Failed to find NGO matches:', matchData);
+    process.exit(1);
+  }
   console.log(`Found ${matchData.matches.length} matches:`);
   matchData.matches.forEach((m: any) => {
     console.log(`- ${m.org_name}: Score ${m.match_score}, Distance ${m.distance_km} km`);
@@ -142,6 +168,10 @@ async function main() {
     }),
   });
   const notifyData: any = await notifyRes.json();
+  if (!notifyRes.ok) {
+    console.error('Failed to notify matches:', notifyData);
+    process.exit(1);
+  }
   console.log(notifyData.message);
 
   // 7. NGO accepts match
@@ -151,11 +181,15 @@ async function main() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      email: 'ngo1@foodbridge.com',
+      email: ngoEmail,
       password: 'Password123!',
     }),
   });
   const ngoLoginData: any = await ngoLoginRes.json();
+  if (!ngoLoginRes.ok) {
+    console.error('Failed to log in as NGO:', ngoLoginData);
+    process.exit(1);
+  }
   const ngoToken = ngoLoginData.token;
   const ngoAuthHeader = `Bearer ${ngoToken}`;
 
@@ -163,6 +197,10 @@ async function main() {
   const getMatchesRes = await fetch(`${API_URL}/auth/matches?ngo_id=${ngo.id}`, {
     headers: { Authorization: ngoAuthHeader },
   });
+  if (!getMatchesRes.ok) {
+    console.error('Failed to get NGO matches:', await getMatchesRes.text());
+    process.exit(1);
+  }
   const ngoMatches: any = await getMatchesRes.json();
   const activeMatch = ngoMatches.find((m: any) => m.donation_id === donationId && m.status === 'pending');
 
@@ -182,6 +220,10 @@ async function main() {
     }),
   });
   const respondData: any = await respondRes.json();
+  if (!respondRes.ok) {
+    console.error('Failed to respond to match:', respondData);
+    process.exit(1);
+  }
   console.log(respondData.message);
   const deliveryId = respondData.delivery_id;
   console.log('Initialized Delivery ID:', deliveryId);
@@ -199,6 +241,10 @@ async function main() {
     }),
   });
   const routeData: any = await routeRes.json();
+  if (!routeRes.ok) {
+    console.error('Failed to generate route:', routeData);
+    process.exit(1);
+  }
   console.log(`Route generated: Distance = ${routeData.distance_km} km, Duration = ${routeData.est_duration_mins} mins`);
 
   // 9. Volunteer confirms Pickup
@@ -208,11 +254,15 @@ async function main() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      email: 'volunteer1@foodbridge.com',
+      email: volunteerEmail,
       password: 'Password123!',
     }),
   });
   const volLoginData: any = await volLoginRes.json();
+  if (!volLoginRes.ok) {
+    console.error('Failed to log in as volunteer:', volLoginData);
+    process.exit(1);
+  }
   const volToken = volLoginData.token;
   const volAuthHeader = `Bearer ${volToken}`;
 
@@ -227,6 +277,10 @@ async function main() {
     }),
   });
   const pickupData: any = await pickupRes.json();
+  if (!pickupRes.ok) {
+    console.error('Failed to confirm pickup:', pickupData);
+    process.exit(1);
+  }
   console.log(pickupData.message);
 
   // 10. Volunteer confirms Delivery dropoff
@@ -243,6 +297,10 @@ async function main() {
     }),
   });
   const deliverData: any = await deliverRes.json();
+  if (!deliverRes.ok) {
+    console.error('Failed to confirm dropoff:', deliverData);
+    process.exit(1);
+  }
   console.log(deliverData.message);
 
   // 11. Verify NGO Load update and donor impact update
