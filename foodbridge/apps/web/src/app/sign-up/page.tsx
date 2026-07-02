@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowRight, Mail, Lock, User, Phone, MapPin, Building, Truck, Loader2, AlertCircle } from 'lucide-react';
 
-export default function SignUpPage() {
+function SignUpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialRole = searchParams.get('role') || 'donor';
@@ -282,5 +282,17 @@ export default function SignUpPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-950 via-green-900 to-emerald-800 text-white">
+        <Loader2 className="w-8 h-8 animate-spin text-green-400" />
+      </div>
+    }>
+      <SignUpForm />
+    </Suspense>
   );
 }
