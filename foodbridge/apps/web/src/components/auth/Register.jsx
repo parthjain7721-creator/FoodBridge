@@ -65,10 +65,10 @@ const Register = ({ onLogin, onSwitchToLogin }) => {
     setLoading(true);
 
     const payload = {
-      email,
+      email: email.trim().toLowerCase(),
       password,
-      full_name: fullName,
-      phone: phone || undefined,
+      full_name: fullName.trim(),
+      phone: phone.trim() || undefined,
       role: selectedRole,
     };
 

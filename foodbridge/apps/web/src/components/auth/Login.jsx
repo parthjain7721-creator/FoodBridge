@@ -13,7 +13,7 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
     setError('');
     setLoading(true);
     try {
-      const data = await loginUser(email, password);
+      const data = await loginUser(email.trim().toLowerCase(), password);
       // Persist session
       localStorage.setItem('fb_token', data.token);
       localStorage.setItem('fb_user', JSON.stringify(data.user));
