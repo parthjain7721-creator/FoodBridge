@@ -243,41 +243,45 @@ const NotificationCenter = ({ user }) => {
       {/* Real-time Toast Banner Popup */}
       {toastNotification && (
         <div
-          className="glass-panel animate-slide-in"
+          className="animate-slide-in"
           style={{
             position: 'fixed',
             bottom: '24px',
             right: '24px',
-            maxWidth: '350px',
+            maxWidth: '360px',
             zIndex: 9999,
-            padding: '1rem',
+            padding: '1.1rem',
             borderLeft: '4px solid var(--color-primary)',
-            background: 'rgba(11, 26, 16, 0.95)',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+            borderTop: '1px solid rgba(16, 185, 129, 0.4)',
+            borderRight: '1px solid rgba(16, 185, 129, 0.4)',
+            borderBottom: '1px solid rgba(16, 185, 129, 0.4)',
+            background: '#09180e',
+            borderRadius: '12px',
+            boxShadow: '0 12px 40px rgba(0,0,0,0.9), 0 0 20px rgba(16, 185, 129, 0.3)',
             display: 'flex',
             alignItems: 'flex-start',
             gap: '0.75rem',
           }}
         >
-          <div style={{ padding: '0.4rem', borderRadius: '50%', background: 'rgba(16,185,129,0.15)' }}>
+          <div style={{ padding: '0.5rem', borderRadius: '50%', background: 'rgba(16,185,129,0.2)', flexShrink: 0 }}>
             {getIcon(toastNotification.type)}
           </div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--color-text-main)' }}>
+            <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#ffffff' }}>
               {toastNotification.title}
             </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '0.2rem', lineHeight: 1.3 }}>
+            <div style={{ fontSize: '0.82rem', color: '#cbd5e1', marginTop: '0.2rem', lineHeight: 1.35 }}>
               {toastNotification.message}
             </div>
-            <span style={{ fontSize: '0.7rem', color: 'var(--color-primary)', marginTop: '0.3rem', display: 'inline-block' }}>
-              ⚡ Real-Time Notification
+            <span style={{ fontSize: '0.72rem', color: 'var(--color-primary)', fontWeight: 600, marginTop: '0.35rem', display: 'inline-block' }}>
+              ⚡ Real-Time Alert
             </span>
           </div>
           <button
             onClick={() => setToastNotification(null)}
-            style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer', padding: 0 }}
+            style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: 0 }}
           >
-            <X size={14} />
+            <X size={16} />
           </button>
         </div>
       )}
@@ -285,44 +289,46 @@ const NotificationCenter = ({ user }) => {
       {/* Notifications Popover Menu */}
       {isOpen && (
         <div
-          className="glass-panel animate-fade-in"
+          className="animate-fade-in"
           style={{
             position: 'absolute',
             top: 'calc(100% + 12px)',
             right: 0,
-            width: '360px',
-            maxHeight: '480px',
+            width: '380px',
+            maxHeight: '520px',
             display: 'flex',
             flexDirection: 'column',
             zIndex: 1000,
-            boxShadow: '0 12px 40px rgba(0,0,0,0.6)',
-            border: '1px solid var(--color-border)',
-            background: 'rgba(10, 22, 14, 0.95)',
-            backdropFilter: 'blur(16px)',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.95), 0 0 25px rgba(16, 185, 129, 0.25)',
+            border: '1px solid rgba(16, 185, 129, 0.4)',
+            background: '#0a170e',
+            borderRadius: '16px',
+            overflow: 'hidden',
           }}
         >
           {/* Header */}
           <div
             style={{
-              padding: '1rem 1.2rem',
-              borderBottom: '1px solid var(--color-border)',
+              padding: '1.1rem 1.25rem',
+              borderBottom: '1px solid rgba(16, 185, 129, 0.25)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
+              background: '#0e2215',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <h4 style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--color-text-main)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <h4 style={{ fontWeight: 700, fontSize: '1.05rem', color: '#ffffff' }}>
                 Notifications
               </h4>
               {unreadCount > 0 && (
                 <span
                   style={{
-                    background: 'rgba(16,185,129,0.15)',
-                    color: 'var(--color-primary)',
+                    background: 'var(--color-primary)',
+                    color: '#000000',
                     fontSize: '0.75rem',
-                    fontWeight: 700,
-                    padding: '0.1rem 0.5rem',
+                    fontWeight: 800,
+                    padding: '0.15rem 0.6rem',
                     borderRadius: '999px',
                   }}
                 >
@@ -335,15 +341,17 @@ const NotificationCenter = ({ user }) => {
               <button
                 onClick={markAllAsRead}
                 style={{
-                  background: 'none',
-                  border: 'none',
+                  background: 'rgba(16, 185, 129, 0.15)',
+                  border: '1px solid rgba(16, 185, 129, 0.4)',
                   color: 'var(--color-primary)',
                   fontSize: '0.78rem',
                   fontWeight: 600,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.3rem',
+                  gap: '0.35rem',
+                  padding: '0.3rem 0.65rem',
+                  borderRadius: '6px',
                 }}
               >
                 <CheckCircle2 size={13} /> Mark all read
@@ -355,23 +363,24 @@ const NotificationCenter = ({ user }) => {
           <div
             style={{
               display: 'flex',
-              padding: '0.5rem 1.2rem',
-              gap: '0.5rem',
-              borderBottom: '1px solid rgba(255,255,255,0.05)',
-              background: 'rgba(0,0,0,0.2)',
+              padding: '0.6rem 1.25rem',
+              gap: '0.6rem',
+              borderBottom: '1px solid rgba(16, 185, 129, 0.2)',
+              background: '#07120a',
             }}
           >
             <button
               onClick={() => setActiveFilter('all')}
               style={{
-                background: activeFilter === 'all' ? 'rgba(16,185,129,0.2)' : 'transparent',
-                color: activeFilter === 'all' ? 'var(--color-primary)' : 'var(--color-text-muted)',
-                border: 'none',
-                padding: '0.3rem 0.75rem',
+                background: activeFilter === 'all' ? 'var(--color-primary)' : 'rgba(255,255,255,0.06)',
+                color: activeFilter === 'all' ? '#000000' : '#cbd5e1',
+                border: activeFilter === 'all' ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                padding: '0.35rem 0.85rem',
                 borderRadius: '6px',
-                fontSize: '0.78rem',
-                fontWeight: 600,
+                fontSize: '0.8rem',
+                fontWeight: 700,
                 cursor: 'pointer',
+                transition: 'all 0.15s ease',
               }}
             >
               All ({notifications.length})
@@ -379,14 +388,15 @@ const NotificationCenter = ({ user }) => {
             <button
               onClick={() => setActiveFilter('unread')}
               style={{
-                background: activeFilter === 'unread' ? 'rgba(16,185,129,0.2)' : 'transparent',
-                color: activeFilter === 'unread' ? 'var(--color-primary)' : 'var(--color-text-muted)',
-                border: 'none',
-                padding: '0.3rem 0.75rem',
+                background: activeFilter === 'unread' ? 'var(--color-primary)' : 'rgba(255,255,255,0.06)',
+                color: activeFilter === 'unread' ? '#000000' : '#cbd5e1',
+                border: activeFilter === 'unread' ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                padding: '0.35rem 0.85rem',
                 borderRadius: '6px',
-                fontSize: '0.78rem',
-                fontWeight: 600,
+                fontSize: '0.8rem',
+                fontWeight: 700,
                 cursor: 'pointer',
+                transition: 'all 0.15s ease',
               }}
             >
               Unread ({unreadCount})
@@ -394,14 +404,14 @@ const NotificationCenter = ({ user }) => {
           </div>
 
           {/* Notifications List */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: '0.5rem 0.75rem' }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '0.75rem' }}>
             {filteredNotifications.length === 0 ? (
               <div
                 style={{
-                  padding: '2.5rem 1rem',
+                  padding: '3rem 1rem',
                   textAlign: 'center',
-                  color: 'var(--color-text-muted)',
-                  fontSize: '0.85rem',
+                  color: '#94a3b8',
+                  fontSize: '0.9rem',
                 }}
               >
                 No notifications found
@@ -414,13 +424,13 @@ const NotificationCenter = ({ user }) => {
                   style={{
                     display: 'flex',
                     alignItems: 'flex-start',
-                    gap: '0.75rem',
-                    padding: '0.75rem 0.85rem',
-                    borderRadius: '8px',
-                    marginBottom: '0.4rem',
+                    gap: '0.8rem',
+                    padding: '0.85rem 1rem',
+                    borderRadius: '10px',
+                    marginBottom: '0.5rem',
                     cursor: 'pointer',
-                    background: n.read ? 'transparent' : 'rgba(16, 185, 129, 0.06)',
-                    border: n.read ? '1px solid transparent' : '1px solid rgba(16, 185, 129, 0.2)',
+                    background: n.read ? '#0e2014' : '#142d1e',
+                    border: n.read ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(16, 185, 129, 0.45)',
                     transition: 'all 0.15s ease',
                     position: 'relative',
                   }}
@@ -428,10 +438,11 @@ const NotificationCenter = ({ user }) => {
                 >
                   <div
                     style={{
-                      width: 32,
-                      height: 32,
+                      width: 36,
+                      height: 36,
                       borderRadius: '50%',
-                      background: 'rgba(255,255,255,0.05)',
+                      background: 'rgba(255,255,255,0.08)',
+                      border: '1px solid rgba(255,255,255,0.1)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -441,31 +452,32 @@ const NotificationCenter = ({ user }) => {
                   >
                     {getIcon(n.type)}
                   </div>
-                  <div style={{ flex: 1, paddingRight: '1.2rem' }}>
+                  <div style={{ flex: 1, paddingRight: '1.4rem' }}>
                     <div
                       style={{
-                        fontWeight: n.read ? 600 : 700,
-                        fontSize: '0.85rem',
-                        color: 'var(--color-text-main)',
+                        fontWeight: 700,
+                        fontSize: '0.88rem',
+                        color: '#ffffff',
                       }}
                     >
                       {n.title}
                     </div>
                     <div
                       style={{
-                        fontSize: '0.78rem',
-                        color: 'var(--color-text-muted)',
-                        marginTop: '0.15rem',
-                        lineHeight: 1.35,
+                        fontSize: '0.81rem',
+                        color: '#cbd5e1',
+                        marginTop: '0.2rem',
+                        lineHeight: 1.4,
                       }}
                     >
                       {n.message}
                     </div>
                     <div
                       style={{
-                        fontSize: '0.7rem',
-                        color: 'rgba(148,163,184,0.6)',
-                        marginTop: '0.3rem',
+                        fontSize: '0.72rem',
+                        color: 'var(--color-primary)',
+                        marginTop: '0.35rem',
+                        fontWeight: 500,
                       }}
                     >
                       {n.time}
@@ -476,13 +488,14 @@ const NotificationCenter = ({ user }) => {
                   {!n.read && (
                     <div
                       style={{
-                        width: 8,
-                        height: 8,
+                        width: 9,
+                        height: 9,
                         borderRadius: '50%',
                         background: 'var(--color-primary)',
                         position: 'absolute',
-                        right: '28px',
-                        top: '14px',
+                        right: '30px',
+                        top: '16px',
+                        boxShadow: '0 0 8px var(--color-primary)',
                       }}
                     />
                   )}
@@ -495,15 +508,15 @@ const NotificationCenter = ({ user }) => {
                     style={{
                       background: 'none',
                       border: 'none',
-                      color: 'rgba(148,163,184,0.5)',
+                      color: '#94a3b8',
                       cursor: 'pointer',
                       position: 'absolute',
                       right: '8px',
-                      top: '12px',
-                      padding: '2px',
+                      top: '14px',
+                      padding: '3px',
                     }}
                   >
-                    <Trash2 size={13} />
+                    <Trash2 size={14} />
                   </button>
                 </div>
               ))
@@ -513,13 +526,13 @@ const NotificationCenter = ({ user }) => {
           {/* Footer */}
           <div
             style={{
-              padding: '0.65rem',
-              borderTop: '1px solid rgba(255,255,255,0.05)',
+              padding: '0.75rem',
+              borderTop: '1px solid rgba(16, 185, 129, 0.2)',
               textAlign: 'center',
-              background: 'rgba(0,0,0,0.3)',
+              background: '#07120a',
             }}
           >
-            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+            <span style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 500 }}>
               ⚡ Real-Time Push Notifications Active
             </span>
           </div>
