@@ -288,32 +288,29 @@ const NotificationCenter = ({ user }) => {
       {/* Notifications Popover Menu */}
       {isOpen && (
         <div
-          className="animate-fade-in"
+          className="notification-popover animate-fade-in"
           style={{
             position: 'absolute',
             top: 'calc(100% + 10px)',
-            right: '-100px', // Aligns neatly towards the right edge of header
+            right: 0,
             width: '360px',
             maxHeight: '460px',
             display: 'flex',
             flexDirection: 'column',
             zIndex: 9999,
-            boxShadow: '0 20px 50px rgba(0,0,0,0.85), 0 0 20px rgba(16, 185, 129, 0.2)',
-            border: '1px solid rgba(16, 185, 129, 0.3)',
-            background: '#0c1b12',
             borderRadius: '14px',
             overflow: 'hidden',
           }}
         >
           {/* Header */}
           <div
+            className="notification-popover-header"
             style={{
               padding: '1rem 1.2rem',
               borderBottom: '1px solid rgba(255,255,255,0.08)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              background: '#09150e',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -327,9 +324,9 @@ const NotificationCenter = ({ user }) => {
                     color: 'var(--color-primary)',
                     fontSize: '0.72rem',
                     fontWeight: 700,
-                    padding: '0.1rem 0.5rem',
+                    padding: '0.15rem 0.55rem',
                     borderRadius: '12px',
-                    border: '1px solid rgba(16,185,129,0.3)',
+                    border: '1px solid rgba(16,185,129,0.35)',
                   }}
                 >
                   {unreadCount} new
@@ -360,18 +357,18 @@ const NotificationCenter = ({ user }) => {
 
           {/* Segmented Filter Pills */}
           <div
+            className="notification-popover-tabs"
             style={{
               display: 'flex',
               padding: '0.5rem 1.2rem',
               gap: '0.5rem',
               borderBottom: '1px solid rgba(255,255,255,0.06)',
-              background: '#08120c',
             }}
           >
             <button
               onClick={() => setActiveFilter('all')}
               style={{
-                background: activeFilter === 'all' ? 'var(--color-primary)' : 'rgba(255,255,255,0.04)',
+                background: activeFilter === 'all' ? 'var(--color-primary)' : 'rgba(255,255,255,0.05)',
                 color: activeFilter === 'all' ? '#000000' : '#94a3b8',
                 border: activeFilter === 'all' ? 'none' : '1px solid rgba(255,255,255,0.08)',
                 padding: '0.28rem 0.75rem',
@@ -387,7 +384,7 @@ const NotificationCenter = ({ user }) => {
             <button
               onClick={() => setActiveFilter('unread')}
               style={{
-                background: activeFilter === 'unread' ? 'var(--color-primary)' : 'rgba(255,255,255,0.04)',
+                background: activeFilter === 'unread' ? 'var(--color-primary)' : 'rgba(255,255,255,0.05)',
                 color: activeFilter === 'unread' ? '#000000' : '#94a3b8',
                 border: activeFilter === 'unread' ? 'none' : '1px solid rgba(255,255,255,0.08)',
                 padding: '0.28rem 0.75rem',
@@ -403,7 +400,7 @@ const NotificationCenter = ({ user }) => {
           </div>
 
           {/* Notifications List */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: '0.6rem 0.75rem', background: '#09150e' }}>
+          <div className="notification-popover-list" style={{ flex: 1, overflowY: 'auto', padding: '0.6rem 0.75rem' }}>
             {filteredNotifications.length === 0 ? (
               <div
                 style={{
@@ -420,6 +417,7 @@ const NotificationCenter = ({ user }) => {
                 <div
                   key={n.id}
                   onClick={() => markAsRead(n.id)}
+                  className={n.read ? 'notif-card-read' : 'notif-card-unread'}
                   style={{
                     display: 'flex',
                     alignItems: 'flex-start',
@@ -428,11 +426,6 @@ const NotificationCenter = ({ user }) => {
                     borderRadius: '8px',
                     marginBottom: '0.4rem',
                     cursor: 'pointer',
-                    background: n.read ? 'rgba(255,255,255,0.02)' : 'rgba(16, 185, 129, 0.08)',
-                    borderLeft: n.read ? '3px solid transparent' : '3px solid var(--color-primary)',
-                    borderTop: '1px solid rgba(255,255,255,0.04)',
-                    borderRight: '1px solid rgba(255,255,255,0.04)',
-                    borderBottom: '1px solid rgba(255,255,255,0.04)',
                     transition: 'all 0.15s ease',
                     position: 'relative',
                   }}
