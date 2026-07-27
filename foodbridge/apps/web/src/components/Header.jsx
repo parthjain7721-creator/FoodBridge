@@ -1,5 +1,6 @@
 import React from 'react';
-import { Bell, Search, User, LogOut } from 'lucide-react';
+import { Search, User, LogOut } from 'lucide-react';
+import NotificationCenter from './NotificationCenter';
 
 const ROLE_LABELS = {
   donor: '🍽️ Donor',
@@ -55,21 +56,8 @@ const Header = ({ user, onLogout }) => {
 
       {/* Right section */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-        {/* Notification bell */}
-        <button
-          style={{ background: 'transparent', border: 'none', cursor: 'pointer', position: 'relative' }}
-        >
-          <Bell color="var(--color-text-muted)" size={22} />
-          <span
-            style={{
-              position: 'absolute', top: -2, right: -2,
-              width: 10, height: 10,
-              background: 'var(--color-highlight)',
-              borderRadius: '50%',
-              boxShadow: '0 0 10px var(--color-highlight)',
-            }}
-          />
-        </button>
+        {/* Real-time Notification Center */}
+        <NotificationCenter user={user} />
 
         {/* User info */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
