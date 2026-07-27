@@ -289,7 +289,7 @@ const NotificationCenter = ({ user }) => {
       {/* Notifications Popover Menu */}
       {isOpen && (
         <div
-          className="animate-fade-in"
+          className="notification-popover animate-fade-in"
           style={{
             position: 'absolute',
             top: 'calc(100% + 12px)',
@@ -299,9 +299,6 @@ const NotificationCenter = ({ user }) => {
             display: 'flex',
             flexDirection: 'column',
             zIndex: 1000,
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.95), 0 0 25px rgba(16, 185, 129, 0.25)',
-            border: '1px solid rgba(16, 185, 129, 0.4)',
-            background: '#0a170e',
             borderRadius: '16px',
             overflow: 'hidden',
           }}
@@ -314,7 +311,7 @@ const NotificationCenter = ({ user }) => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              background: '#0e2215',
+              background: '#0d2215',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
@@ -366,15 +363,15 @@ const NotificationCenter = ({ user }) => {
               padding: '0.6rem 1.25rem',
               gap: '0.6rem',
               borderBottom: '1px solid rgba(16, 185, 129, 0.2)',
-              background: '#07120a',
+              background: '#06110a',
             }}
           >
             <button
               onClick={() => setActiveFilter('all')}
               style={{
-                background: activeFilter === 'all' ? 'var(--color-primary)' : 'rgba(255,255,255,0.06)',
-                color: activeFilter === 'all' ? '#000000' : '#cbd5e1',
-                border: activeFilter === 'all' ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                background: activeFilter === 'all' ? 'var(--color-primary)' : 'rgba(255,255,255,0.08)',
+                color: activeFilter === 'all' ? '#000000' : '#e2e8f0',
+                border: activeFilter === 'all' ? 'none' : '1px solid rgba(255,255,255,0.15)',
                 padding: '0.35rem 0.85rem',
                 borderRadius: '6px',
                 fontSize: '0.8rem',
@@ -388,9 +385,9 @@ const NotificationCenter = ({ user }) => {
             <button
               onClick={() => setActiveFilter('unread')}
               style={{
-                background: activeFilter === 'unread' ? 'var(--color-primary)' : 'rgba(255,255,255,0.06)',
-                color: activeFilter === 'unread' ? '#000000' : '#cbd5e1',
-                border: activeFilter === 'unread' ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                background: activeFilter === 'unread' ? 'var(--color-primary)' : 'rgba(255,255,255,0.08)',
+                color: activeFilter === 'unread' ? '#000000' : '#e2e8f0',
+                border: activeFilter === 'unread' ? 'none' : '1px solid rgba(255,255,255,0.15)',
                 padding: '0.35rem 0.85rem',
                 borderRadius: '6px',
                 fontSize: '0.8rem',
@@ -404,7 +401,7 @@ const NotificationCenter = ({ user }) => {
           </div>
 
           {/* Notifications List */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: '0.75rem' }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '0.75rem', background: '#08160e' }}>
             {filteredNotifications.length === 0 ? (
               <div
                 style={{
