@@ -9,7 +9,7 @@ const ROLE_LABELS = {
   admin: '🛡️ Admin',
 };
 
-const Header = ({ user, onLogout }) => {
+const Header = ({ user, onLogout, onNavigate }) => {
   const roleLabel = ROLE_LABELS[user?.role] || user?.role || 'User';
   const initials = user?.full_name
     ? user.full_name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
@@ -19,6 +19,8 @@ const Header = ({ user, onLogout }) => {
     <header
       className="glass-panel"
       style={{
+        position: 'relative',
+        zIndex: 50,
         margin: '1rem 1rem 0 0',
         padding: '0.85rem 2rem',
         display: 'flex',
@@ -59,12 +61,37 @@ const Header = ({ user, onLogout }) => {
         {/* Real-time Notification Center */}
         <NotificationCenter user={user} />
 
-        {/* User info */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        {/* User info — clickable profile button */}
+        <button
+          type="button"
+          onClick={() => onNavigate && onNavigate('profile')}
+          title="View Profile"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '10px',
+            padding: '0.4rem 0.85rem 0.4rem 0.4rem',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            color: 'inherit',
+            textAlign: 'left',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = 'rgba(16, 185, 129, 0.1)';
+            e.currentTarget.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+          }}
+        >
           {/* Avatar circle with initials */}
           <div
             style={{
-              width: 40, height: 40,
+              width: 38, height: 38,
               borderRadius: '50%',
               background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -77,7 +104,7 @@ const Header = ({ user, onLogout }) => {
             {initials}
           </div>
           <div>
-            <div style={{ fontWeight: 600, fontSize: '0.9rem', lineHeight: 1.2 }}>
+            <div style={{ fontWeight: 600, fontSize: '0.9rem', lineHeight: 1.2, color: '#ffffff' }}>
               {user?.full_name || 'User'}
             </div>
             <div
@@ -90,7 +117,7 @@ const Header = ({ user, onLogout }) => {
               {roleLabel}
             </div>
           </div>
-        </div>
+        </button>
 
         {/* Logout button */}
         <button
@@ -128,3 +155,4 @@ const Header = ({ user, onLogout }) => {
 };
 
 export default Header;
+

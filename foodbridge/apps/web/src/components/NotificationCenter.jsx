@@ -199,10 +199,10 @@ const NotificationCenter = ({ user }) => {
         onClick={() => setIsOpen(!isOpen)}
         title="Notifications"
         style={{
-          background: isOpen ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255, 255, 255, 0.03)',
-          border: isOpen ? '1px solid var(--color-primary)' : '1px solid rgba(255, 255, 255, 0.08)',
-          width: '38px',
-          height: '38px',
+          background: isOpen ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+          border: isOpen ? '1px solid var(--color-primary)' : '1px solid rgba(255, 255, 255, 0.1)',
+          width: '40px',
+          height: '40px',
           borderRadius: '10px',
           cursor: 'pointer',
           position: 'relative',
@@ -210,6 +210,7 @@ const NotificationCenter = ({ user }) => {
           alignItems: 'center',
           justifyContent: 'center',
           transition: 'all 0.2s ease',
+          boxShadow: isOpen ? '0 0 12px rgba(16, 185, 129, 0.25)' : 'none',
         }}
       >
         <Bell color={unreadCount > 0 ? 'var(--color-primary)' : 'var(--color-text-muted)'} size={20} />
@@ -217,20 +218,21 @@ const NotificationCenter = ({ user }) => {
           <span
             style={{
               position: 'absolute',
-              top: '-3px',
-              right: '-3px',
+              top: '-4px',
+              right: '-4px',
               background: 'var(--color-primary)',
-              color: '#000',
+              color: '#000000',
               fontWeight: 800,
               fontSize: '0.65rem',
-              padding: '0 4px',
-              minWidth: '16px',
-              height: '16px',
+              padding: '0 5px',
+              minWidth: '18px',
+              height: '18px',
               borderRadius: '999px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 0 8px var(--color-primary)',
+              boxShadow: '0 0 10px rgba(16, 185, 129, 0.8)',
+              border: '2px solid #060d08',
             }}
           >
             {unreadCount > 9 ? '9+' : unreadCount}
@@ -246,40 +248,41 @@ const NotificationCenter = ({ user }) => {
             position: 'fixed',
             bottom: '24px',
             right: '24px',
-            width: '340px',
+            width: '350px',
             zIndex: 99999,
-            padding: '1rem 1.2rem',
+            padding: '1rem 1.25rem',
             borderLeft: '4px solid var(--color-primary)',
-            borderTop: '1px solid rgba(255,255,255,0.1)',
-            borderRight: '1px solid rgba(255,255,255,0.1)',
-            borderBottom: '1px solid rgba(255,255,255,0.1)',
-            background: '#0d1d13',
-            borderRadius: '10px',
-            boxShadow: '0 16px 40px rgba(0,0,0,0.85), 0 0 15px rgba(16,185,129,0.2)',
+            borderTop: '1px solid rgba(16, 185, 129, 0.25)',
+            borderRight: '1px solid rgba(16, 185, 129, 0.25)',
+            borderBottom: '1px solid rgba(16, 185, 129, 0.25)',
+            background: '#09180e',
+            backgroundColor: '#09180e',
+            borderRadius: '12px',
+            boxShadow: '0 20px 45px rgba(0, 0, 0, 0.9), 0 0 20px rgba(16, 185, 129, 0.25)',
             display: 'flex',
             alignItems: 'flex-start',
-            gap: '0.75rem',
+            gap: '0.85rem',
           }}
         >
-          <div style={{ padding: '0.45rem', borderRadius: '50%', background: 'rgba(16,185,129,0.15)', flexShrink: 0, marginTop: '2px' }}>
+          <div style={{ padding: '0.5rem', borderRadius: '50%', background: 'rgba(16,185,129,0.18)', flexShrink: 0, marginTop: '2px' }}>
             {getIcon(toastNotification.type)}
           </div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 700, fontSize: '0.88rem', color: '#ffffff', lineHeight: 1.2 }}>
+            <div style={{ fontWeight: 700, fontSize: '0.88rem', color: '#ffffff', lineHeight: 1.25 }}>
               {toastNotification.title}
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '0.25rem', lineHeight: 1.35 }}>
+            <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '0.3rem', lineHeight: 1.4 }}>
               {toastNotification.message}
             </div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--color-primary)', fontWeight: 600, marginTop: '0.35rem' }}>
+            <div style={{ fontSize: '0.72rem', color: 'var(--color-primary)', fontWeight: 600, marginTop: '0.4rem' }}>
               ⚡ Real-Time Update
             </div>
           </div>
           <button
             onClick={() => setToastNotification(null)}
-            style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', padding: '2px' }}
+            style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', padding: '3px' }}
           >
-            <X size={14} />
+            <X size={15} />
           </button>
         </div>,
         document.body
@@ -291,14 +294,19 @@ const NotificationCenter = ({ user }) => {
           className="notification-popover animate-fade-in"
           style={{
             position: 'absolute',
-            top: 'calc(100% + 10px)',
+            top: 'calc(100% + 12px)',
             right: 0,
-            width: '360px',
-            maxHeight: '460px',
+            width: '380px',
+            maxHeight: '480px',
             display: 'flex',
             flexDirection: 'column',
-            zIndex: 9999,
-            borderRadius: '14px',
+            zIndex: 99999,
+            isolation: 'isolate',
+            background: '#09180e',
+            backgroundColor: '#09180e',
+            borderRadius: '16px',
+            border: '1px solid rgba(16, 185, 129, 0.4)',
+            boxShadow: '0 25px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(16, 185, 129, 0.2)',
             overflow: 'hidden',
           }}
         >
@@ -306,15 +314,17 @@ const NotificationCenter = ({ user }) => {
           <div
             className="notification-popover-header"
             style={{
-              padding: '1rem 1.2rem',
-              borderBottom: '1px solid rgba(255,255,255,0.08)',
+              padding: '1.1rem 1.25rem',
+              background: '#0e2416',
+              backgroundColor: '#0e2416',
+              borderBottom: '1px solid rgba(16, 185, 129, 0.2)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <h4 style={{ fontWeight: 700, fontSize: '0.95rem', color: '#ffffff', margin: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <h4 style={{ fontWeight: 700, fontSize: '0.98rem', color: '#ffffff', margin: 0 }}>
                 Notifications
               </h4>
               {unreadCount > 0 && (
@@ -324,18 +334,19 @@ const NotificationCenter = ({ user }) => {
                     color: 'var(--color-primary)',
                     fontSize: '0.72rem',
                     fontWeight: 700,
-                    padding: '0.15rem 0.55rem',
+                    padding: '0.18rem 0.6rem',
                     borderRadius: '12px',
                     border: '1px solid rgba(16,185,129,0.35)',
                   }}
                 >
-                  {unreadCount} new
+                  {unreadCount} unread
                 </span>
               )}
             </div>
 
             {unreadCount > 0 && (
               <button
+                type="button"
                 onClick={markAllAsRead}
                 style={{
                   background: 'none',
@@ -346,11 +357,13 @@ const NotificationCenter = ({ user }) => {
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.3rem',
-                  padding: 0,
+                  gap: '0.35rem',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                  transition: 'background 0.2s ease',
                 }}
               >
-                <CheckCircle2 size={13} /> Mark all read
+                <CheckCircle2 size={14} /> Mark all read
               </button>
             )}
           </div>
@@ -360,39 +373,49 @@ const NotificationCenter = ({ user }) => {
             className="notification-popover-tabs"
             style={{
               display: 'flex',
-              padding: '0.5rem 1.2rem',
+              padding: '0.6rem 1rem',
               gap: '0.5rem',
-              borderBottom: '1px solid rgba(255,255,255,0.06)',
+              background: '#06110a',
+              backgroundColor: '#06110a',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
             }}
           >
             <button
+              type="button"
               onClick={() => setActiveFilter('all')}
               style={{
-                background: activeFilter === 'all' ? 'var(--color-primary)' : 'rgba(255,255,255,0.05)',
+                flex: 1,
+                background: activeFilter === 'all' ? 'var(--color-primary)' : 'rgba(255, 255, 255, 0.04)',
+                backgroundColor: activeFilter === 'all' ? 'var(--color-primary)' : 'rgba(255, 255, 255, 0.04)',
                 color: activeFilter === 'all' ? '#000000' : '#94a3b8',
-                border: activeFilter === 'all' ? 'none' : '1px solid rgba(255,255,255,0.08)',
-                padding: '0.28rem 0.75rem',
-                borderRadius: '6px',
+                border: activeFilter === 'all' ? 'none' : '1px solid rgba(255, 255, 255, 0.08)',
+                padding: '0.4rem 0.85rem',
+                borderRadius: '8px',
                 fontSize: '0.78rem',
                 fontWeight: 700,
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
+                textAlign: 'center',
               }}
             >
               All ({notifications.length})
             </button>
             <button
+              type="button"
               onClick={() => setActiveFilter('unread')}
               style={{
-                background: activeFilter === 'unread' ? 'var(--color-primary)' : 'rgba(255,255,255,0.05)',
+                flex: 1,
+                background: activeFilter === 'unread' ? 'var(--color-primary)' : 'rgba(255, 255, 255, 0.04)',
+                backgroundColor: activeFilter === 'unread' ? 'var(--color-primary)' : 'rgba(255, 255, 255, 0.04)',
                 color: activeFilter === 'unread' ? '#000000' : '#94a3b8',
-                border: activeFilter === 'unread' ? 'none' : '1px solid rgba(255,255,255,0.08)',
-                padding: '0.28rem 0.75rem',
-                borderRadius: '6px',
+                border: activeFilter === 'unread' ? 'none' : '1px solid rgba(255, 255, 255, 0.08)',
+                padding: '0.4rem 0.85rem',
+                borderRadius: '8px',
                 fontSize: '0.78rem',
                 fontWeight: 700,
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
+                textAlign: 'center',
               }}
             >
               Unread ({unreadCount})
@@ -400,42 +423,60 @@ const NotificationCenter = ({ user }) => {
           </div>
 
           {/* Notifications List */}
-          <div className="notification-popover-list" style={{ flex: 1, overflowY: 'auto', padding: '0.6rem 0.75rem' }}>
+          <div
+            className="notification-popover-list"
+            style={{
+              flex: 1,
+              overflowY: 'auto',
+              padding: '0.75rem',
+              background: '#09180e',
+              backgroundColor: '#09180e',
+            }}
+          >
             {filteredNotifications.length === 0 ? (
               <div
                 style={{
-                  padding: '2.5rem 1rem',
+                  padding: '3rem 1rem',
                   textAlign: 'center',
                   color: '#64748b',
                   fontSize: '0.85rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '0.5rem',
                 }}
               >
-                No notifications found
+                <CheckCircle2 size={28} color="rgba(16, 185, 129, 0.4)" />
+                <span>No notifications found</span>
               </div>
             ) : (
               filteredNotifications.map((n) => (
                 <div
                   key={n.id}
                   onClick={() => markAsRead(n.id)}
-                  className={n.read ? 'notif-card-read' : 'notif-card-unread'}
                   style={{
                     display: 'flex',
                     alignItems: 'flex-start',
-                    gap: '0.75rem',
-                    padding: '0.75rem 0.85rem',
-                    borderRadius: '8px',
-                    marginBottom: '0.4rem',
+                    gap: '0.85rem',
+                    padding: '0.85rem 1rem',
+                    borderRadius: '10px',
+                    marginBottom: '0.5rem',
                     cursor: 'pointer',
-                    transition: 'all 0.15s ease',
+                    transition: 'all 0.2s ease',
                     position: 'relative',
+                    background: n.read ? '#0b1f13' : '#122c1b',
+                    backgroundColor: n.read ? '#0b1f13' : '#122c1b',
+                    border: n.read ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(16, 185, 129, 0.35)',
+                    borderLeft: n.read ? '1px solid rgba(255, 255, 255, 0.06)' : '4px solid var(--color-primary)',
+                    boxShadow: n.read ? 'none' : '0 4px 14px rgba(0, 0, 0, 0.35)',
                   }}
                 >
                   <div
                     style={{
-                      width: 32,
-                      height: 32,
+                      width: 34,
+                      height: 34,
                       borderRadius: '50%',
-                      background: 'rgba(255,255,255,0.06)',
+                      background: n.read ? 'rgba(255,255,255,0.05)' : 'rgba(16, 185, 129, 0.15)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -445,31 +486,47 @@ const NotificationCenter = ({ user }) => {
                   >
                     {getIcon(n.type)}
                   </div>
-                  <div style={{ flex: 1, paddingRight: '1.2rem' }}>
-                    <div
-                      style={{
-                        fontWeight: n.read ? 600 : 700,
-                        fontSize: '0.85rem',
-                        color: n.read ? '#e2e8f0' : '#ffffff',
-                      }}
-                    >
-                      {n.title}
+                  <div style={{ flex: 1, paddingRight: '1.4rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      {!n.read && (
+                        <span
+                          style={{
+                            width: 6,
+                            height: 6,
+                            borderRadius: '50%',
+                            background: 'var(--color-primary)',
+                            display: 'inline-block',
+                            flexShrink: 0,
+                          }}
+                        />
+                      )}
+                      <div
+                        style={{
+                          fontWeight: n.read ? 600 : 700,
+                          fontSize: '0.88rem',
+                          color: n.read ? '#cbd5e1' : '#ffffff',
+                          lineHeight: 1.25,
+                        }}
+                      >
+                        {n.title}
+                      </div>
                     </div>
                     <div
                       style={{
-                        fontSize: '0.78rem',
-                        color: '#94a3b8',
-                        marginTop: '0.15rem',
-                        lineHeight: 1.35,
+                        fontSize: '0.8rem',
+                        color: n.read ? '#64748b' : '#94a3b8',
+                        marginTop: '0.25rem',
+                        lineHeight: 1.4,
                       }}
                     >
                       {n.message}
                     </div>
                     <div
                       style={{
-                        fontSize: '0.7rem',
-                        color: '#64748b',
-                        marginTop: '0.3rem',
+                        fontSize: '0.72rem',
+                        color: n.read ? '#475569' : '#64748b',
+                        marginTop: '0.35rem',
+                        fontWeight: 500,
                       }}
                     >
                       {n.time}
@@ -480,19 +537,29 @@ const NotificationCenter = ({ user }) => {
                   <button
                     type="button"
                     onClick={(e) => deleteNotification(n.id, e)}
-                    title="Dismiss"
+                    title="Dismiss notification"
                     style={{
                       background: 'none',
                       border: 'none',
                       color: '#64748b',
                       cursor: 'pointer',
                       position: 'absolute',
-                      right: '8px',
+                      right: '10px',
                       top: '10px',
-                      padding: '2px',
+                      padding: '4px',
+                      borderRadius: '4px',
+                      transition: 'color 0.15s ease, background 0.15s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = '#ef4444';
+                      e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = '#64748b';
+                      e.currentTarget.style.background = 'none';
                     }}
                   >
-                    <Trash2 size={13} />
+                    <Trash2 size={14} />
                   </button>
                 </div>
               ))
@@ -502,14 +569,19 @@ const NotificationCenter = ({ user }) => {
           {/* Footer */}
           <div
             style={{
-              padding: '0.6rem',
-              borderTop: '1px solid rgba(255,255,255,0.06)',
+              padding: '0.65rem 1rem',
+              borderTop: '1px solid rgba(255, 255, 255, 0.08)',
               textAlign: 'center',
-              background: '#07110a',
+              background: '#06110a',
+              backgroundColor: '#06110a',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
             }}
           >
-            <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
-              ⚡ Real-Time Push Notifications Active
+            <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: 500 }}>
+              Live real-time feed active
             </span>
           </div>
         </div>

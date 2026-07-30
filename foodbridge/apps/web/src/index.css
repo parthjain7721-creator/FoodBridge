@@ -638,33 +638,40 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .notification-popover {
-  background-color: #091a10 !important;
+  background-color: #09180e !important;
+  background: #09180e !important;
   opacity: 1 !important;
-  backdrop-filter: none !important;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.98), 0 0 25px rgba(16, 185, 129, 0.3) !important;
-  border: 1px solid rgba(16, 185, 129, 0.5) !important;
+  isolation: isolate !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(16, 185, 129, 0.2) !important;
+  border: 1px solid rgba(16, 185, 129, 0.4) !important;
 }
 
 .notification-popover-header {
-  background-color: #0c2315 !important;
+  background-color: #0e2416 !important;
+  background: #0e2416 !important;
 }
 
 .notification-popover-tabs {
   background-color: #06110a !important;
+  background: #06110a !important;
 }
 
 .notification-popover-list {
-  background-color: #091a10 !important;
+  background-color: #09180e !important;
+  background: #09180e !important;
 }
 
-.notif-card-unread {
-  background-color: #122c1b !important;
-  border: 1px solid rgba(16, 185, 129, 0.4) !important;
+.notification-popover-list::-webkit-scrollbar {
+  width: 6px;
 }
 
-.notif-card-read {
-  background-color: #0c1e13 !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+.notification-popover-list::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.3);
+  border-radius: 4px;
+}
+
+.notification-popover-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.5);
 }
 
 

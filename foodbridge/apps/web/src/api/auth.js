@@ -168,8 +168,11 @@ export async function loginUser(email, password) {
     console.warn('[Login] Supabase login fallback:', err.message);
   }
 
-  // If local account exists or fallback
+  // If local account exists, verify password
   if (localAccount) {
+    if (localAccount.password !== password) {
+      throw new Error('Invalid email or password. Please try again.');
+    }
     return {
       token: `local_token_${Date.now()}`,
       user: {
@@ -181,18 +184,8 @@ export async function loginUser(email, password) {
     };
   }
 
-  // Fallback user login
-  const fallbackUser = {
-    id: `user_${Date.now()}`,
-    email: cleanEmail,
-    full_name: cleanEmail.split('@')[0].replace('.', ' '),
-    role: 'donor',
-  };
-
-  return {
-    token: `local_token_${Date.now()}`,
-    user: fallbackUser,
-  };
+  // No account found — reject login
+  throw new Error('No account found with this email. Please sign up first.');
 }
 
 /**

@@ -8,6 +8,7 @@ import DeliveryMap from '../components/DeliveryMap';
 import FreshnessEstimator from '../components/FreshnessEstimator';
 import EcoRecipes from '../components/EcoRecipes';
 import Leaderboard from '../components/Leaderboard';
+import ProfilePage from '../components/ProfilePage';
 import Login from '../components/auth/Login';
 import Register from '../components/auth/Register';
 
@@ -96,6 +97,8 @@ const App = () => {
         return <EcoRecipes />;
       case 'leaderboard':
         return <Leaderboard />;
+      case 'profile':
+        return <ProfilePage user={user} />;
       default:
         return <DashboardView role={uiRole} user={user} token={token} />;
     }
@@ -121,7 +124,7 @@ const App = () => {
     <div className="app-layout animate-fade-in">
       <Sidebar activeRole={uiRole} activeView={activeView} setActiveView={setActiveView} />
       <div className="main-content">
-        <Header user={user} onLogout={handleLogout} />
+        <Header user={user} onLogout={handleLogout} onNavigate={setActiveView} />
         <main className="page-content">
           {renderView()}
         </main>
